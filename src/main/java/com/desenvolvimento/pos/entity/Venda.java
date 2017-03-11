@@ -1,6 +1,10 @@
 package com.desenvolvimento.pos.entity;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,6 +17,8 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="venda")
@@ -32,6 +38,10 @@ public class Venda extends BaseEntity<Long>{
 	@ManyToMany(cascade = {CascadeType.PERSIST}, fetch=FetchType.LAZY)
 	@JoinTable(name="venda_produto", joinColumns= @JoinColumn(name="id_venda"), inverseJoinColumns= @JoinColumn(name="id_produto"))
 	private List<Produto> produtos;
+	
+	@Temporal(TemporalType.TIMESTAMP)
+	@Column(name="dh_venda")
+	private Date dataHora;
 	
 	@Override
 	public Long getId() {
@@ -56,6 +66,9 @@ public class Venda extends BaseEntity<Long>{
 	 * @return the produtos
 	 */
 	public List<Produto> getProdutos() {
+		if(produtos == null) {
+			produtos = new ArrayList<Produto>();
+		}
 		return produtos;
 	}
 
@@ -73,5 +86,18 @@ public class Venda extends BaseEntity<Long>{
 		this.id = id;
 	}
 
-	
+	/**
+	 * @return the dataHora
+	 */
+	public Date getDataHora() {
+		return dataHora;
+	}
+
+	/**
+	 * @param dataHora the dataHora to set
+	 */
+	public void setDataHora(Date dataHora) {
+		this.dataHora = dataHora;
+	}
+
 }

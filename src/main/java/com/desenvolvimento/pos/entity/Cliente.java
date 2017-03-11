@@ -51,6 +51,17 @@ public class Cliente extends BaseEntity<Long>{
 	}
 
 	/**
+	 * Construtor com preenchiemento de nome e cpf.
+	 * 
+	 * @param id
+	 * @param nome
+	 */
+	public Cliente(String nome, String cpf) {
+		this.nome = nome;
+		this.cpf = cpf;
+	}
+
+	/**
 	 * Construtor com preenchimento de nome.
 	 * 
 	 * @param nome

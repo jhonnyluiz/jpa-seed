@@ -35,7 +35,7 @@ public class Produto extends BaseEntity<Long>{
 	private String fabricante;
 	
 	@Temporal(TemporalType.DATE)
-	@Column(name="dt_validade", length=50)
+	@Column(name="dt_validade")
 	@Basic(fetch=FetchType.LAZY)
 	private Date validade;
 	

@@ -5,14 +5,14 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Version;
 
 @MappedSuperclass
-public abstract class BaseEntity<T> implements Serializable {
+public abstract class BaseEntity<PK> implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	
 	@Version
 	private Integer version;
 	
-	public abstract T getId();
+	public abstract PK getId();
 	
 	/**
 	 * Obtém a versão da entidade.
