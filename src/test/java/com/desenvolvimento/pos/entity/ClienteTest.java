@@ -10,7 +10,6 @@ import org.hibernate.LazyInitializationException;
 import org.junit.Test;
 
 public class ClienteTest extends BaseCrudTest<Cliente>{
-	
 	private static final String CPF_PADRAO = "012.345.678-99";
 
 	@Test
@@ -91,29 +90,6 @@ public class ClienteTest extends BaseCrudTest<Cliente>{
 		query.getSingleResult();
 		
 		fail("o metodo getResultList deveria ter retornado exceção");
-	}
-
-	@Test
-	public void deveAcessarAtributoLazy(){
-		salvar(getNovoCliente());
-		
-		Cliente cliente = getEm().find(Cliente.class, 1L);
-
-		assertNotNull("Cliente não poderá ser nulo", cliente);
-		assertNotNull("Lista de compras não poderá ser nulo", cliente.getCompras());
-	}
-	
-	@Test(expected = LazyInitializationException.class)
-	public void deveRetornarExcecaoAtributoLazyForaEscopoEntityManager(){
-		salvar(getNovoCliente());
-		
-		Cliente cliente = getEm().find(Cliente.class, 1L);
-		assertNotNull("Cliente não poderá ser nulo", cliente);
-		
-		getEm().detach(cliente);
-		cliente.getCompras().size();
-		
-		fail("Deveria ter retornado exceção de LazyInitializationException, atributo fora de escopo");
 	}
 
 	private Cliente getNovoCliente() {

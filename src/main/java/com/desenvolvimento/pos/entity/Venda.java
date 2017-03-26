@@ -37,7 +37,7 @@ public class Venda extends BaseEntity<Long>{
 	
 	@ManyToMany(cascade = {CascadeType.PERSIST}, fetch=FetchType.LAZY)
 	@JoinTable(name="venda_produto", joinColumns= @JoinColumn(name="id_venda"), inverseJoinColumns= @JoinColumn(name="id_produto"))
-	private List<Produto> produtos;
+	private List<Produto2> produtos;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="dh_venda")
@@ -65,9 +65,9 @@ public class Venda extends BaseEntity<Long>{
 	/**
 	 * @return the produtos
 	 */
-	public List<Produto> getProdutos() {
+	public List<Produto2> getProdutos() {
 		if(produtos == null) {
-			produtos = new ArrayList<Produto>();
+			produtos = new ArrayList<Produto2>();
 		}
 		return produtos;
 	}
@@ -75,7 +75,7 @@ public class Venda extends BaseEntity<Long>{
 	/**
 	 * @param produtos the produtos to set
 	 */
-	public void setProdutos(List<Produto> produtos) {
+	public void setProdutos(List<Produto2> produtos) {
 		this.produtos = produtos;
 	}
 

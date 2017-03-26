@@ -27,7 +27,7 @@ public class VendaTest extends BaseCrudTest<Venda>{
 		assertFalse("Verifica deve ter id", venda.isTransient());
 		assertFalse("Verifica deve ter id", venda.getCliente().isTransient());
 		
-		for (Produto produto : venda.getProdutos()) {
+		for (Produto2 produto : venda.getProdutos()) {
 			assertFalse("Verifica deve ter id", produto.isTransient());
 		}
 	}
@@ -72,8 +72,8 @@ public class VendaTest extends BaseCrudTest<Venda>{
 	}
 	
 	
-	private Produto criarProduto(String nome, String fabricante) {
-		return new Produto(nome, fabricante);
+	private Produto2 criarProduto(String nome, String fabricante) {
+		return new Produto2(nome, fabricante);
 	}
 	
 	private Venda criarVenda() {

@@ -57,8 +57,5 @@ public abstract class BaseEntity<PK> implements Serializable {
 			return false;
 		return true;
 	}
-
-	
-	
 	
 }

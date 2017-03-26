@@ -5,8 +5,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,42 +12,41 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 
-public class ProdutoTest extends BaseCrudTest<Produto>{
+public class MarcaTest extends BaseCrudTest<Marca>{
 	
-	private static final String PRODUTO_1 = "Produto 1";
-	private static final String ENTIDADE = " Produto ";
+	private static final String ENTIDADE = " Marca ";
 	private static final String SELECT_PADRAO = SELECT_E_FROM + ENTIDADE + " e ";
 	
 	@Test
-	public void deveSalvarProduto(){
-		Produto entidade = getNovaEntidade();
+	public void deveSalvarMarca(){
+		Marca entidade = getNovaEntidade();
 		assertTrue("Não pode ter id definido", entidade.isTransient());
 		salvar(entidade);
 		assertNotNull("Deverá ter id definido", entidade.getId());
 	}
 	
 	@Test
-	public void deveAtualizarProduto(){
-		Produto entidade = salvar(getNovaEntidade());
+	public void deveAtualizarMarca(){
+		Marca entidade = salvar(getNovaEntidade());
 		assertNotNull("Deverá ter id definido", entidade.getId());
 		
-		entidade.setNmProduto("Lapis");
+		entidade.setNmMarca("Marca 2");
 		atualizar(entidade);
-		assertEquals("Deverá ter o mesmo valor alterado",entidade.getNmProduto() , "Lapis");
+		assertEquals("Deverá ter o mesmo valor alterado",entidade.getNmMarca() , "Marca 2");
 		
-		Produto entidadeConsultada = consultaPorId(entidade.getId(), Produto.class);
-		assertEquals("Deverá ter o mesmo valor quanto consultado",entidadeConsultada.getNmProduto() , entidade.getNmProduto());
+		Marca entidadeConsultada = consultaPorId(entidade.getId(), Marca.class);
+		assertEquals("Deverá ter o mesmo valor quanto consultado",entidadeConsultada.getNmMarca() , entidade.getNmMarca());
 	}
 	
 	@Test
-	public void deveExcluirProduto(){
-		Produto entidade = salvar(getNovaEntidade());
+	public void deveExcluirMarca(){
+		Marca entidade = salvar(getNovaEntidade());
 		assertNotNull("Deverá ter id definido", entidade.getId());
 		
 		Long id = entidade.getId();
 		excluir(entidade);
 		
-		Produto entidadeConsultada = consultaPorId(id, Produto.class);
+		Marca entidadeConsultada = consultaPorId(id, Marca.class);
 		assertNull("Deverá ser um objeto nulo", entidadeConsultada);
 	}
 	
@@ -61,15 +58,16 @@ public class ProdutoTest extends BaseCrudTest<Produto>{
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(SELECT_PADRAO);
-		List<Produto> lista = consultaLista(hql.toString(), Produto.class);
+		List<Marca> lista = consultaLista(hql.toString(), Marca.class);
 		
 		assertTrue("Resultado deverá ser maior ou igual a 10", lista.size() >= 10);
 	}
 	
 	@Test
 	public void deveConsultarPorAtributo(){
+		String nmMarca = "Marca Produto";
 		for (int i = 0; i < 10; i++) {
-			salvar(getNovaEntidade());
+			salvar(getNovaEntidade(nmMarca));
 		}
 
 		StringBuilder hql = new StringBuilder();
@@ -77,27 +75,28 @@ public class ProdutoTest extends BaseCrudTest<Produto>{
 		
 		hql.append(SELECT_PADRAO);
 		hql.append(WHERE_PADRAO);
-		hql.append(" AND e.nmProduto = :nmProduto");
-		parametros.put("nmProduto", PRODUTO_1);
+		hql.append(" AND e.nmMarca = :nomeMarca");
+		parametros.put("nomeMarca", nmMarca);
 		
-		List<Produto> lista = consultaListaPorParametro(hql.toString(), parametros, Produto.class);
+		List<Marca> lista = consultaListaPorParametro(hql.toString(), parametros, Marca.class);
 		
 		assertTrue("Resultado deverá ser maior ou igual a 10", lista.size() >= 10);
 	}
 	
 	@Test
 	public void deveConsultarPorLikeAtributo(){
-		salvarEntidades(10);
+		String nmMarca = "Marca Produto";
+		salvarEntidades(10, nmMarca);
 		
 		StringBuilder hql = new StringBuilder();
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		
 		hql.append(SELECT_PADRAO);
 		hql.append(WHERE_PADRAO);
-		hql.append(" AND e.nmProduto LIKE :nmProduto");
-		parametros.put("nmProduto", getAtributoLike("duto"));
+		hql.append(" AND e.nmMarca LIKE :nomeMarca");
+		parametros.put("nomeMarca", getAtributoLike("arc"));
 		
-		List<Produto> lista = consultaListaPorParametro(hql.toString(), parametros, Produto.class);
+		List<Marca> lista = consultaListaPorParametro(hql.toString(), parametros, Marca.class);
 		
 		assertTrue("Resultado deverá ser maior ou igual a 10", lista.size() >= 10);
 	}
@@ -108,14 +107,14 @@ public class ProdutoTest extends BaseCrudTest<Produto>{
 	public void deveConsultarRestringindoBusca() {
 		salvarEntidades(10);
 		
-		Criteria criteria = createCriteria(Produto.class, "m")
-					.add(Restrictions.ne("m.id", 3L))
+		Criteria criteria = createCriteria(Marca.class, "m")
+					.add(Restrictions.ne("m.id", 5L))
 					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
-		List<Produto> lista = criteria.list();
+		List<Marca> lista = criteria.list();
 		
 		assertTrue("Verifica quantidade, mínimo igual 9", lista.size() >= 9);
-		lista.forEach(entidade -> assertFalse("Nenhum registro poderá ter o id = 3", entidade.getId() == 3L));
+		lista.forEach(entidade -> assertFalse("Nenhum registro poderá ter o id = 5", entidade.getId() == 5L));
 	}
 	
 	
@@ -123,22 +122,22 @@ public class ProdutoTest extends BaseCrudTest<Produto>{
 	//## METÓDOS AUXILIARES
 	//#####################
 	public void salvarEntidades(Integer qt) {
+		salvarEntidades(qt, "Marca Produto");
+	}
+	
+	public void salvarEntidades(Integer qt, String nmMarca) {
 		for (int i = 0; i < qt; i++) {
-			salvar(getNovaEntidade());
+			salvar(getNovaEntidade(nmMarca));
 		}
 	}
 	
-	public Produto getNovaEntidade() {
-		return new Produto(PRODUTO_1, "Descrição", "A0001/2017", new Marca("Marca 1") , new Date());
+	public Marca getNovaEntidade(String nmMarca) {
+		Marca entidade = new Marca();
+		entidade.setNmMarca(nmMarca);
+		return entidade;
 	}
 	
-	public EstoqueProduto getEstoqueProduto() {
-		EstoqueProduto entidade = new EstoqueProduto();
-		entidade.setQtMovimentada(new Double("10"));
-		entidade.setQtAnterior(new Double("0"));
-		entidade.setQtTotal(new Double("10"));
-		entidade.setLote("BR001");
-		entidade.setProduto(getNovaEntidade());
-		return entidade;
+	public Marca getNovaEntidade() {
+		return getNovaEntidade("Marca 1");
 	}
 }

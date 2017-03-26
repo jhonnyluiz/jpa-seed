@@ -1,114 +1,108 @@
 package com.desenvolvimento.pos.entity;
 
 import java.util.Date;
+import java.util.List;
 
-import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
-@Table(name="produto")
+@Table(name="produtos")
 public class Produto extends BaseEntity<Long>{
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
-
+	private static final long serialVersionUID = 8486102399992665025L;
+	
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name="id_produto", unique=true, nullable=false)
-	private Long id;
+	@GeneratedValue(strategy=GenerationType.AUTO)
+	@Column(name="ID_PRODUTO")
+	private Long idProduto;
 	
-	@Column(name="nm_produto", nullable=false, length=100)
-	private String nome;
+	@Column(name="NM_PRODUTO", nullable=false)
+	private String nmProduto;
 	
-	@Column(name="nm_fabricante", length=50)
-	@Basic(fetch=FetchType.LAZY)
-	private String fabricante;
+	@Column(name="DS_PRODUTO")
+	private String dsProduto;
 	
-	@Temporal(TemporalType.DATE)
-	@Column(name="dt_validade")
-	@Basic(fetch=FetchType.LAZY)
-	private Date validade;
+	@Column(name="CD_PRODUTO")
+	private String cdProduto;
 	
-	public Produto(){}
-
-	public Produto(String nome) {
-		this.nome = nome;
+	@ManyToOne(fetch=FetchType.LAZY, cascade=CascadeType.PERSIST)
+	@JoinColumn(name="ID_MARCA", referencedColumnName="ID_MARCA", nullable=true)
+	private Marca marca;
+	
+	@OneToMany(mappedBy="produto", fetch=FetchType.LAZY, cascade=CascadeType.REMOVE)
+	private List<EstoqueProduto> estoqueProduto;
+	
+	@Column(name="DT_REGISTRO")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date dtRegistro;
+	
+	public Produto() {
+		
+	}
+	
+	public Produto(String nmProduto, String dsProduto, String cdProduto, Marca marca, Date dtRegistro) {
+		this.nmProduto = nmProduto;
+		this.dsProduto = dsProduto;
+		this.cdProduto = cdProduto;
+		this.marca = marca;
+		this.dtRegistro = dtRegistro;
+	}
+	
+	public Long getIdProduto() {
+		return idProduto;
 	}
 
-	public Produto(String nome, String fabricante) {
-		this.nome = nome;
-		this.fabricante = fabricante;
+	public void setIdProduto(Long idProduto) {
+		this.idProduto = idProduto;
 	}
-	
+
+	public String getNmProduto() {
+		return nmProduto;
+	}
+
+	public void setNmProduto(String nmProduto) {
+		this.nmProduto = nmProduto;
+	}
+
+	public String getDsProduto() {
+		return dsProduto;
+	}
+
+	public void setDsProduto(String dsProduto) {
+		this.dsProduto = dsProduto;
+	}
+
+	public String getCdProduto() {
+		return cdProduto;
+	}
+
+	public void setCdProduto(String cdProduto) {
+		this.cdProduto = cdProduto;
+	}
+
+	public Date getDtRegistro() {
+		return dtRegistro;
+	}
+
+	public void setDtRegistro(Date dtRegistro) {
+		this.dtRegistro = dtRegistro;
+	}
+
 	@Override
 	public Long getId() {
-		return id;
-	}
-
-
-	/**
-	 * @return the nome
-	 */
-	public String getNome() {
-		return nome;
-	}
-
-
-	/**
-	 * @param nome the nome to set
-	 */
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
-
-
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-
-	/**
-	 * @return the fabricante
-	 */
-	public String getFabricante() {
-		return fabricante;
-	}
-
-
-	/**
-	 * @param fabricante the fabricante to set
-	 */
-	public void setFabricante(String fabricante) {
-		this.fabricante = fabricante;
-	}
-
-
-	/**
-	 * @return the validade
-	 */
-	public Date getValidade() {
-		return validade;
-	}
-
-
-	/**
-	 * @param validade the validade to set
-	 */
-	public void setValidade(Date validade) {
-		this.validade = validade;
+		return idProduto;
 	}
 
 }

@@ -14,42 +14,42 @@ import org.hibernate.Criteria;
 import org.hibernate.criterion.Restrictions;
 import org.junit.Test;
 
-public class ProdutoTest extends BaseCrudTest<Produto>{
+public class ValorProdutoTest extends BaseCrudTest<ValorProduto>{
 	
-	private static final String PRODUTO_1 = "Produto 1";
-	private static final String ENTIDADE = " Produto ";
+	private static final Double DESCONTO_0_25 = new Double("0.25");
+	private static final String ENTIDADE = " ValorProduto ";
 	private static final String SELECT_PADRAO = SELECT_E_FROM + ENTIDADE + " e ";
 	
 	@Test
-	public void deveSalvarProduto(){
-		Produto entidade = getNovaEntidade();
+	public void deveSalvarMarca(){
+		ValorProduto entidade = getNovaEntidade();
 		assertTrue("Não pode ter id definido", entidade.isTransient());
 		salvar(entidade);
 		assertNotNull("Deverá ter id definido", entidade.getId());
 	}
 	
 	@Test
-	public void deveAtualizarProduto(){
-		Produto entidade = salvar(getNovaEntidade());
+	public void deveAtualizarMarca(){
+		ValorProduto entidade = salvar(getNovaEntidade());
 		assertNotNull("Deverá ter id definido", entidade.getId());
 		
-		entidade.setNmProduto("Lapis");
+		entidade.setVlDesconto(DESCONTO_0_25);
 		atualizar(entidade);
-		assertEquals("Deverá ter o mesmo valor alterado",entidade.getNmProduto() , "Lapis");
+		assertEquals("Deverá ter o mesmo valor alterado",entidade.getVlDesconto() , DESCONTO_0_25);
 		
-		Produto entidadeConsultada = consultaPorId(entidade.getId(), Produto.class);
-		assertEquals("Deverá ter o mesmo valor quanto consultado",entidadeConsultada.getNmProduto() , entidade.getNmProduto());
+		ValorProduto entidadeConsultada = consultaPorId(entidade.getId(), ValorProduto.class);
+		assertEquals("Deverá ter o mesmo valor quanto consultado",entidadeConsultada.getVlDesconto() , entidade.getVlDesconto());
 	}
 	
 	@Test
-	public void deveExcluirProduto(){
-		Produto entidade = salvar(getNovaEntidade());
+	public void deveExcluirMarca(){
+		ValorProduto entidade = salvar(getNovaEntidade());
 		assertNotNull("Deverá ter id definido", entidade.getId());
 		
 		Long id = entidade.getId();
 		excluir(entidade);
 		
-		Produto entidadeConsultada = consultaPorId(id, Produto.class);
+		ValorProduto entidadeConsultada = consultaPorId(id, ValorProduto.class);
 		assertNull("Deverá ser um objeto nulo", entidadeConsultada);
 	}
 	
@@ -61,7 +61,7 @@ public class ProdutoTest extends BaseCrudTest<Produto>{
 		
 		StringBuilder hql = new StringBuilder();
 		hql.append(SELECT_PADRAO);
-		List<Produto> lista = consultaLista(hql.toString(), Produto.class);
+		List<ValorProduto> lista = consultaLista(hql.toString(), ValorProduto.class);
 		
 		assertTrue("Resultado deverá ser maior ou igual a 10", lista.size() >= 10);
 	}
@@ -77,10 +77,10 @@ public class ProdutoTest extends BaseCrudTest<Produto>{
 		
 		hql.append(SELECT_PADRAO);
 		hql.append(WHERE_PADRAO);
-		hql.append(" AND e.nmProduto = :nmProduto");
-		parametros.put("nmProduto", PRODUTO_1);
+		hql.append(" AND e.vlLucro > :lucro");
+		parametros.put("lucro", new Double("5"));
 		
-		List<Produto> lista = consultaListaPorParametro(hql.toString(), parametros, Produto.class);
+		List<ValorProduto> lista = consultaListaPorParametro(hql.toString(), parametros, ValorProduto.class);
 		
 		assertTrue("Resultado deverá ser maior ou igual a 10", lista.size() >= 10);
 	}
@@ -93,11 +93,12 @@ public class ProdutoTest extends BaseCrudTest<Produto>{
 		Map<String, Object> parametros = new HashMap<String, Object>();
 		
 		hql.append(SELECT_PADRAO);
+		hql.append(" LEFT JOIN e.estoqueProduto estoqueP");
 		hql.append(WHERE_PADRAO);
-		hql.append(" AND e.nmProduto LIKE :nmProduto");
-		parametros.put("nmProduto", getAtributoLike("duto"));
+		hql.append(" AND estoqueP.lote LIKE :lote");
+		parametros.put("lote", getAtributoLike("BR"));
 		
-		List<Produto> lista = consultaListaPorParametro(hql.toString(), parametros, Produto.class);
+		List<ValorProduto> lista = consultaListaPorParametro(hql.toString(), parametros, ValorProduto.class);
 		
 		assertTrue("Resultado deverá ser maior ou igual a 10", lista.size() >= 10);
 	}
@@ -108,14 +109,16 @@ public class ProdutoTest extends BaseCrudTest<Produto>{
 	public void deveConsultarRestringindoBusca() {
 		salvarEntidades(10);
 		
-		Criteria criteria = createCriteria(Produto.class, "m")
-					.add(Restrictions.ne("m.id", 3L))
+		Criteria criteria = createCriteria(ValorProduto.class, "vp")
+					.add(Restrictions.ne("vp.id", 1L))
 					.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
 		
-		List<Produto> lista = criteria.list();
+		List<ValorProduto> lista = criteria.list();
 		
 		assertTrue("Verifica quantidade, mínimo igual 9", lista.size() >= 9);
-		lista.forEach(entidade -> assertFalse("Nenhum registro poderá ter o id = 3", entidade.getId() == 3L));
+		lista.forEach(entidade -> {
+			assertFalse("Nenhum registro poderá ter o id = 1", entidade.getId() == 1L);
+		});
 	}
 	
 	
@@ -128,8 +131,18 @@ public class ProdutoTest extends BaseCrudTest<Produto>{
 		}
 	}
 	
-	public Produto getNovaEntidade() {
-		return new Produto(PRODUTO_1, "Descrição", "A0001/2017", new Marca("Marca 1") , new Date());
+	public ValorProduto getNovaEntidade() {
+		ValorProduto entidade = new ValorProduto();
+		entidade.setEstoqueProduto(getEstoqueProduto());
+		entidade.setVlCusto(new Double("2.5"));
+		entidade.setVlDesconto(new Double("0.5"));
+		entidade.setVlLucro(new Double("5.5"));
+		entidade.setVlVenda(new Double("8.5"));
+		return entidade;
+	}
+		
+	public Produto getProduto() {
+		return new Produto("Produto 1", "Descrição", "A0001/2017", new Marca("Marca 1") , new Date());
 	}
 	
 	public EstoqueProduto getEstoqueProduto() {
@@ -138,7 +151,7 @@ public class ProdutoTest extends BaseCrudTest<Produto>{
 		entidade.setQtAnterior(new Double("0"));
 		entidade.setQtTotal(new Double("10"));
 		entidade.setLote("BR001");
-		entidade.setProduto(getNovaEntidade());
+		entidade.setProduto(getProduto());
 		return entidade;
 	}
 }
